@@ -62,6 +62,39 @@ public class Board
         }
     }
 
+    public void CreateRoom(RoomColor color, int startRow, int startCol, int endRow, int endCol)
+    {
+        var room = new Room(color);
+        for (int row = startRow; row <= endRow; row++)
+        {
+            for (int col = startCol; col <= endCol; col++)
+            {
+                var cell = GetCell(col, row);
+
+                if (col == startCol)
+                {
+                    cell.Walls[Directions.left] = true;
+                }
+                if (col == endCol)
+                {
+                    cell.Walls[Directions.right] = true;
+                }
+                if (row == startRow)
+                {
+                    cell.Walls[Directions.up] = true;
+                }
+                if (row == endRow)
+                {
+                    cell.Walls[Directions.down] = true;
+                }
+
+                room.AddCell(cell.CellId);
+            }
+        }
+
+        Rooms.Add(room);
+    }
+
     public Room? GetRoomByColor(RoomColor color)
     {
         return Rooms.FirstOrDefault(r => r.Color == color);

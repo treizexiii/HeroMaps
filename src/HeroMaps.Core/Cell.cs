@@ -61,6 +61,11 @@ public class Cell
 
     public void SetWall(Directions direction)
     {
+        // Setting a wall removes any door in that direction
+        if (Doors.ContainsKey(direction))
+        {
+            Doors[direction] = false;
+        }
         if (Walls.ContainsKey(direction))
         {
             Walls[direction] = true;
@@ -77,9 +82,14 @@ public class Cell
 
     public void SetDoor(Directions direction)
     {
+        if (!HasWall(direction))
+        {
+            throw new NoWallException(direction);
+        }
         if (Doors.ContainsKey(direction))
         {
             Doors[direction] = true;
+            Walls[direction] = false;
         }
     }
 
@@ -88,6 +98,7 @@ public class Cell
         if (Doors.ContainsKey(direction))
         {
             Doors[direction] = false;
+            Walls[direction] = true;
         }
     }
 
@@ -110,4 +121,10 @@ public class Cell
     {
         return $"{{\"row\":{Row},\"column\":{Column},\"content\":\"{Content.Content}\",\"contentType\":\"{Content.ContentType}\",\"zone\":\"{Zone}\",\"doors\":{{\"up\":{HasDoor(Directions.up).ToString().ToLower()},\"down\":{HasDoor(Directions.down).ToString().ToLower()},\"left\":{HasDoor(Directions.left).ToString().ToLower()},\"right\":{HasDoor(Directions.right).ToString().ToLower()}}}}}";
     }
+}
+
+public class NoWallException : Exception
+{
+    public NoWallException(Directions directions)
+        : base($"No wall exists in the direction: {directions}") { }
 }
